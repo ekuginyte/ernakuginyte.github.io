@@ -1,23 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Your Name | Digital CV</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erna Kuginyte | CV & Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: auto; padding: 20px; }
-        header { border-bottom: 2px solid #333; padding-bottom: 20px; }
-        .contact-info { color: #666; }
+        body { margin: 0; display: flex; font-family: 'Inter', -apple-system, sans-serif; color: #2d3436; line-height: 1.6; }
+        
+        /* Left Side: The CV */
+        .left-cv { 
+            width: 35%; height: 100vh; position: fixed; 
+            background: #ffffff; padding: 60px 40px; overflow-y: auto;
+            border-right: 1px solid #eee;
+        }
+
+        .header-name { font-size: 2.5rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; letter-spacing: -1px; }
+        
+        .contact-grid { font-size: 0.9rem; color: #636e72; margin-bottom: 30px; }
+        .contact-item { margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+        .contact-item a { color: #636e72; text-decoration: none; border-bottom: 1px solid transparent; }
+        .contact-item a:hover { border-bottom: 1px solid #636e72; }
+
+        .profile-summary { font-size: 1.1rem; color: #2d3436; font-style: italic; border-left: 3px solid #0984e3; padding-left: 20px; margin: 40px 0; }
+
+        /* Right Side: The Projects */
+        .right-projects { margin-left: 35%; width: 65%; padding: 60px; background: #fafafa; min-height: 100vh; }
+        .project-card { background: white; border: 1px solid #eee; border-radius: 12px; padding: 30px; margin-bottom: 30px; transition: all 0.3s ease; }
+        .project-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.05); }
+        .project-tag { font-size: 0.75rem; font-weight: bold; background: #e1f5fe; color: #01579b; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; }
+
+        @media (max-width: 900px) {
+            body { flex-direction: column; }
+            .left-cv, .right-projects { width: 100%; position: static; height: auto; margin-left: 0; padding: 40px 20px; }
+        }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Your Name</h1>
-        <p class="contact-info">Location | Email | LinkedIn</p>
-    </header>
-    
-    <section>
-        <h2>Experience</h2>
-        <h3>Job Title - Company</h3>
-        <p>Short description of what you achieved here.</p>
-    </section>
+
+    <div class="left-cv">
+        <div class="header-name">Erna Kuginyte</div>
+        
+        <div class="contact-grid">
+            <div class="contact-item"><i class="fas fa-map-marker-alt"></i> London, UK</div>
+            <div class="contact-item"><i class="fas fa-envelope"></i> <a href="mailto:erna.kuginyte@gmail.com">erna.kuginyte@gmail.com</a></div>
+            <div class="contact-item"><i class="fab fa-linkedin"></i> <a href="https://linkedin.com/in/ernakuginyte">ernakuginyte</a></div>
+            <div class="contact-item"><i class="fab fa-github"></i> <a href="https://github.com/ekuginyte">ekuginyte</a></div>
+        </div>
+
+        <div class="profile-summary">
+            Curious, pragmatic, and driven by impact, I bridge data science, analytics, and operations to make complex processes data-driven. Passionate about improving customer outcomes, I use technology to turn operational processes into levers for smarter decisions.
+        </div>
+
+        <h3>Education</h3>
+        <p><em>Add your degree details here...</em></p>
+    </div>
+
+    <div class="right-projects">
+        <h2 style="margin-top:0">Portfolio & Impact</h2>
+        
+        <div class="project-card">
+            <span class="project-tag">Data Science</span>
+            <h3>Operational Efficiency Model</h3>
+            <p>Automated a legacy reporting process using Python, reducing manual overhead by 40% and providing real-time insights for the operations team.</p>
+            <a href="https://github.com/ekuginyte/repo-name" style="color: #0984e3; font-weight: bold; text-decoration: none;">View Repository →</a>
+        </div>
+    </div>
+
 </body>
 </html>
