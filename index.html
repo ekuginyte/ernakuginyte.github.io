@@ -34,6 +34,18 @@
             body { flex-direction: column; }
             .left-cv, .right-projects { width: 100%; position: static; height: auto; margin-left: 0; padding: 40px 20px; }
         }
+        .edu-item { margin-bottom: 20px; font-size: 0.95rem; }
+        .section-title { 
+            text-transform: uppercase; 
+            font-size: 0.8rem; 
+            letter-spacing: 1.5px; 
+            color: #0984e3; 
+            margin-top: 40px; 
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .tech-stack { font-family: monospace; font-size: 0.8rem; color: #636e72; margin: 10px 0; }
+        .project-link { color: #0984e3; font-weight: bold; text-decoration: none; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -49,22 +61,65 @@
         </div>
 
         <div class="profile-summary">
-            Curious, pragmatic, and driven by impact, I bridge data science, analytics, and operations to make complex processes data-driven. Passionate about improving customer outcomes, I use technology to turn operational processes into levers for smarter decisions.
+            Curious, pragmatic, and driven by impact, I bridge data science, analytics, and operations to make complex processes data-driven.
         </div>
 
-        <h3>Education</h3>
-        <p><em>Add your degree details here...</em></p>
-    </div>
+        <h2 class="section-title">Education</h2>
+        
+        <div class="edu-item">
+            <strong>MSc Applied Statistics & Data Mining</strong><br>
+            University of St Andrews | 2023<br>
+            <small><em>Distinction, Dean’s List</em></small>
+        </div>
+
+        <div class="edu-item">
+            <strong>Erasmus+ Exchange – Architecture</strong><br>
+            Stuttgart University, Germany | 2019
+        </div>
+
+        <div class="edu-item">
+            <strong>BSc Architecture</strong><br>
+            Welsh School of Architecture | 2020<br>
+            <small><em>First Class Honours</em></small>
+        </div>
+        
+        </div>
 
     <div class="right-projects">
-        <h2 style="margin-top:0">Portfolio & Impact</h2>
+        <h2 style="margin-top:0">Selected Research & Projects</h2>
         
         <div class="project-card">
-            <span class="project-tag">Data Science</span>
-            <h3>Operational Efficiency Model</h3>
-            <p>Automated a legacy reporting process using Python, reducing manual overhead by 40% and providing real-time insights for the operations team.</p>
-            <a href="https://github.com/ekuginyte/repo-name" style="color: #0984e3; font-weight: bold; text-decoration: none;">View Repository →</a>
+            <span class="project-tag">Bayesian Statistics</span>
+            <h3>High-Dimensional Variable Selection</h3>
+            <p>MSc Dissertation exploring Bayesian LASSO, Spike-and-Slab, and Horseshoe priors applied to complex datasets.</p>
+            <div class="tech-stack">R · XGBoost · Elastic Net</div>
+            <a href="https://github.com/ekuginyte/dissertation" class="project-link">View Research →</a>
         </div>
+
+        <div class="project-card">
+            <span class="project-tag">Spatial Design</span>
+            <h3>RIBA Bronze Medal Nomination</h3>
+            <p>Research-led architectural project based on Open Government Data and QGIS analysis.</p>
+            <div class="tech-stack">QGIS · Spatial Analysis</div>
+            <a href="https://www.presidentsmedals.com/Entry-51301" class="project-link">View Publication →</a>
+        </div>
+
+        <div class="project-card">
+            <span class="project-tag">Computational Design</span>
+            <h3>SENSMOD: Spatial Theory</h3>
+            <p>Built a spatial architectural project using Arduino and motion sensors, published in ResearchGate.</p>
+            <div class="tech-stack">Arduino · Physical Computing</div>
+            <a href="https://www.researchgate.net/publication/343982617_SENSMOD..." class="project-link">Read Paper →</a>
+        </div>
+
+        <div class="project-card">
+            <span class="project-tag">Data Visualization</span>
+            <h3>Interactive Covid-19 Tracker</h3>
+            <p>Real-time dashboard using scraped JHU CSSE data with animated mapping functionality.</p>
+            <div class="tech-stack">R · Shiny · Web Scraping</div>
+            <a href="https://github.com/ekuginyte/MT5763_Shiny" class="project-link">Open App →</a>
+        </div>
+
     </div>
 
 </body>
