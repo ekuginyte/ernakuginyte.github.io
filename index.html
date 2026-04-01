@@ -1,146 +1,382 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Erna Kuginyte | CV & Portfolio</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body { margin: 0; display: flex; font-family: 'Inter', -apple-system, sans-serif; color: #2d3436; line-height: 1.6; }
-        
-        /* Left Side: The CV */
-        .left-cv { 
-            width: 35%; height: 100vh; position: fixed; 
-            background: #ffffff; padding: 60px 40px; overflow-y: auto;
-            border-right: 1px solid #eee;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Name</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .header-name { font-size: 2.5rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; letter-spacing: -1px; }
-        
-        .contact-grid { font-size: 0.9rem; color: #636e72; margin-bottom: 30px; }
-        .contact-item { margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
-        .contact-item a { color: #636e72; text-decoration: none; border-bottom: 1px solid transparent; }
-        .contact-item a:hover { border-bottom: 1px solid #636e72; }
+    :root {
+      --white: #ffffff;
+      --black: #111110;
+      --gray: #888884;
+      --light: #f5f4f0;
+      --tooltip-bg: #111110;
+      --tooltip-text: #ffffff;
+      --tooltip-sub: #888884;
+    }
 
-        .profile-summary { font-size: 1.1rem; color: #2d3436; font-style: italic; border-left: 3px solid #0984e3; padding-left: 20px; margin: 40px 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--white);
+      color: var(--black);
+      font-family: 'DM Mono', monospace;
+      overflow: hidden;
+    }
 
-        /* Right Side: The Projects */
-        .right-projects { margin-left: 35%; width: 65%; padding: 60px; background: #fafafa; min-height: 100vh; }
-        .project-card { background: white; border: 1px solid #eee; border-radius: 12px; padding: 30px; margin-bottom: 30px; transition: all 0.3s ease; }
-        .project-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.05); }
-        .project-tag { font-size: 0.75rem; font-weight: bold; background: #e1f5fe; color: #01579b; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; }
+    /* ── layout ── */
+    .page {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
 
-        @media (max-width: 900px) {
-            body { flex-direction: column; }
-            .left-cv, .right-projects { width: 100%; position: static; height: auto; margin-left: 0; padding: 40px 20px; }
-        }
-        .edu-item { margin-bottom: 20px; font-size: 0.95rem; }
-        .section-title { 
-            text-transform: uppercase; 
-            font-size: 0.8rem; 
-            letter-spacing: 1.5px; 
-            color: #0984e3; 
-            margin-top: 40px; 
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-        .tech-stack { font-family: monospace; font-size: 0.8rem; color: #636e72; margin: 10px 0; }
-        .project-link { color: #0984e3; font-weight: bold; text-decoration: none; font-size: 0.9rem; }
-    </style>
+    /* ── name / header ── */
+    .name {
+      position: absolute;
+      top: 48px;
+      left: 56px;
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(28px, 4vw, 48px);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      color: var(--black);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .name em {
+      font-style: italic;
+      color: var(--gray);
+    }
+
+    /* ── hint text ── */
+    .hint {
+      position: absolute;
+      bottom: 48px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gray);
+      opacity: 0;
+      animation: fadeIn 0.6s ease 1.2s forwards;
+      white-space: nowrap;
+    }
+
+    /* ── SVG wrapper ── */
+    .scene {
+      width: min(680px, 90vw);
+      position: relative;
+      opacity: 0;
+      transform: translateY(16px);
+      animation: riseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+    }
+
+    .scene svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ── tooltip ── */
+    .tooltip {
+      position: absolute;
+      background: var(--tooltip-bg);
+      color: var(--tooltip-text);
+      padding: 10px 14px;
+      border-radius: 6px;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    .tooltip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .tooltip .label {
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+    }
+
+    .tooltip .sublabel {
+      font-size: 11px;
+      color: var(--tooltip-sub);
+      margin-top: 2px;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── clickable SVG items ── */
+    .scene svg .item {
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .scene svg .item:hover {
+      opacity: 0.7;
+    }
+
+    /* ── person special ── */
+    .scene svg #person-group {
+      cursor: pointer;
+    }
+    .scene svg #person-group:hover .person-body {
+      opacity: 0.8;
+    }
+
+    /* ── cv link ── */
+    .cv-link {
+      display: none;
+    }
+
+    /* ── animations ── */
+    @keyframes riseIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    /* ── subtle line top ── */
+    .topline {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: var(--black);
+    }
+  </style>
 </head>
 <body>
+<div class="page">
+  <div class="topline"></div>
 
-    <div class="left-cv">
-        <div class="header-name">Erna Kuginyte</div>
-        
-        <div class="contact-grid">
-            <div class="contact-item"><i class="fas fa-map-marker-alt"></i> London, UK</div>
-            <div class="contact-item"><i class="fas fa-envelope"></i> <a href="mailto:erna.kuginyte@gmail.com">erna.kuginyte@gmail.com</a></div>
-            <div class="contact-item"><i class="fab fa-linkedin"></i> <a href="https://linkedin.com/in/ernakuginyte">ernakuginyte</a></div>
-            <div class="contact-item"><i class="fab fa-github"></i> <a href="https://github.com/ekuginyte">ekuginyte</a></div>
-        </div>
+  <div class="name">Your <em>Name</em></div>
 
-        <div class="profile-summary">
-            Curious, pragmatic, and driven by impact, I bridge data science, analytics, and operations to make complex processes data-driven.
-        </div>
+  <!-- tooltip element (shared, moved by JS) -->
+  <div class="tooltip" id="tooltip">
+    <div class="label" id="tt-label"></div>
+    <div class="sublabel" id="tt-sub"></div>
+  </div>
 
-        <h2 class="section-title">Education</h2>
-        
-        <div class="edu-item">
-            <strong>MSc Applied Statistics & Data Mining</strong><br>
-            University of St Andrews | 2023<br>
-            <small><em>Distinction, Dean’s List</em></small>
-        </div>
+  <div class="scene" id="scene">
 
-        <div class="edu-item">
-            <strong>Erasmus+ Exchange – Architecture</strong><br>
-            Stuttgart University, Germany | 2019
-        </div>
+    <!-- ============================================================
+         PASTE YOUR SVG HERE
+         Replace everything between these comments with your SVG.
+         Keep the <svg> tag but remove width/height attributes —
+         the .scene wrapper handles sizing.
+         Add class="item" to each interactive group/path,
+         and data-label="..." data-sub="..." for tooltip content.
+         Add id="person-group" to the figure group.
+         ============================================================ -->
 
-        <div class="edu-item">
-            <strong>BSc Architecture</strong><br>
-            Welsh School of Architecture | 2020<br>
-            <small><em>First Class Honours</em></small>
-        </div>
-        
-        </div>
+    <svg viewBox="0 0 680 620" xmlns="http://www.w3.org/2000/svg">
 
-        <h2 class="section-title">Technical & Personal</h2>
+      <!-- DESK SURFACE -->
+      <polygon class="item" data-label="IKEA Karlby" data-sub="Walnut desk top, 186cm"
+        style="fill:#ece9e2;stroke:#1a1a1a;stroke-width:1;stroke-linejoin:round"
+        points="170,230 490,100 630,185 310,315"/>
+      <polygon style="fill:#d9d6ce;stroke:#1a1a1a;stroke-width:1" points="170,230 310,315 310,365 170,280"/>
+      <polygon style="fill:#f5f3ee;stroke:#1a1a1a;stroke-width:1" points="310,315 630,185 630,235 310,365"/>
 
-    <div class="skills-section">
-        <strong><i class="fas fa-language"></i> Languages:</strong>
-        <p style="font-size: 0.9rem; margin-top: 5px;">
-            Lithuanian (Native) · English (Fluent) · Russian (Beginner)
-        </p>
-    </div>
+      <!-- DESK LEGS -->
+      <polygon style="fill:#2a2a2a;stroke:#1a1a1a;stroke-width:1" points="178,272 190,278 190,340 178,334"/>
+      <polygon style="fill:#888;stroke:#1a1a1a;stroke-width:1" points="190,278 200,272 200,334 190,340"/>
+      <polygon style="fill:#2a2a2a;stroke:#1a1a1a;stroke-width:1" points="298,354 310,360 310,420 298,414"/>
+      <polygon style="fill:#888;stroke:#1a1a1a;stroke-width:1" points="310,360 320,354 320,414 310,420"/>
+      <polygon style="fill:#2a2a2a;stroke:#1a1a1a;stroke-width:1" points="618,226 630,232 630,290 618,284"/>
+      <polygon style="fill:#888;stroke:#1a1a1a;stroke-width:1" points="630,232 640,226 640,286 630,290"/>
+      <polygon style="fill:#2a2a2a;stroke:#1a1a1a;stroke-width:1" points="478,140 490,146 490,206 478,200"/>
+      <polygon style="fill:#888;stroke:#1a1a1a;stroke-width:1" points="490,146 500,140 500,200 490,206"/>
+      <ellipse style="fill:#2a2a2a" cx="184" cy="342" rx="7" ry="3"/>
+      <ellipse style="fill:#2a2a2a" cx="304" cy="422" rx="7" ry="3"/>
+      <ellipse style="fill:#2a2a2a" cx="624" cy="292" rx="7" ry="3"/>
+      <ellipse style="fill:#2a2a2a" cx="484" cy="208" rx="7" ry="3"/>
 
-    <div class="hobbies-container">
-        <strong><i class="fas fa-heart"></i> Beyond the Data:</strong>
-        <div class="hobbies-grid">
-            <span class="hobby-chip"><i class="fas fa-swimmer"></i> Swimming</span>
-            <span class="hobby-chip"><i class="fas fa-bicycle"></i> Cycling</span>
-            <span class="hobby-chip"><i class="fas fa-running"></i> Running</span>
-            <span class="hobby-chip"><i class="fas fa-paint-brush"></i> Lino Printing</span>
-            <span class="hobby-chip"><i class="fas fa-volleyball-ball"></i> Recreational Sports</span>
-        </div>
-    </div>
+      <!-- MONITOR -->
+      <g class="item" data-label="Samsung Odyssey G9" data-sub="49&quot; curved ultrawide">
+        <path style="fill:#222;stroke:#1a1a1a;stroke-width:1" d="M 430,68 Q 480,55 530,75 L 528,110 Q 478,92 428,105 Z"/>
+        <path style="fill:#2a2a2a;stroke:none" d="M 431,71 Q 479,59 527,78 L 525,107 Q 477,90 430,102 Z"/>
+        <path style="fill:none;stroke:#555;stroke-width:0.8;opacity:0.6" d="M 442,76 Q 465,70 488,77"/>
+        <polygon style="fill:#2a2a2a;stroke:#1a1a1a;stroke-width:1" points="474,108 480,106 482,130 476,132"/>
+        <polygon style="fill:#d9d6ce;stroke:#1a1a1a;stroke-width:1" points="462,128 492,118 496,125 466,135"/>
+      </g>
 
-    <div class="right-projects">
-        <h2 style="margin-top:0">Selected Research & Projects</h2>
-        
-        <div class="project-card">
-            <span class="project-tag">Bayesian Statistics</span>
-            <h3>High-Dimensional Variable Selection</h3>
-            <p>MSc Dissertation exploring Bayesian LASSO, Spike-and-Slab, and Horseshoe priors applied to complex datasets.</p>
-            <div class="tech-stack">R · XGBoost · Elastic Net</div>
-            <a href="https://github.com/ekuginyte/dissertation" class="project-link">View Research →</a>
-        </div>
+      <!-- KEYBOARD -->
+      <g class="item" data-label="Logitech MX Keys" data-sub="Wireless keyboard">
+        <polygon style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:1" points="390,165 480,130 500,140 410,175"/>
+        <polygon style="fill:#d9d6ce;stroke:#1a1a1a;stroke-width:1" points="390,165 410,175 410,182 390,172"/>
+        <polygon style="fill:#ece9e2;stroke:#1a1a1a;stroke-width:1" points="410,175 500,140 500,147 410,182"/>
+        <circle style="fill:#bbb;stroke:none" cx="415" cy="163" r="1.5"/>
+        <circle style="fill:#bbb;stroke:none" cx="425" cy="159" r="1.5"/>
+        <circle style="fill:#bbb;stroke:none" cx="435" cy="155" r="1.5"/>
+        <circle style="fill:#bbb;stroke:none" cx="445" cy="151" r="1.5"/>
+        <circle style="fill:#bbb;stroke:none" cx="455" cy="147" r="1.5"/>
+        <circle style="fill:#bbb;stroke:none" cx="420" cy="168" r="1.5"/>
+        <circle style="fill:#bbb;stroke:none" cx="430" cy="164" r="1.5"/>
+        <circle style="fill:#bbb;stroke:none" cx="440" cy="160" r="1.5"/>
+        <circle style="fill:#bbb;stroke:none" cx="450" cy="156" r="1.5"/>
+        <circle style="fill:#bbb;stroke:none" cx="460" cy="152" r="1.5"/>
+        <circle style="fill:#bbb;stroke:none" cx="470" cy="148" r="1.5"/>
+      </g>
 
-        <div class="project-card">
-            <span class="project-tag">Spatial Design</span>
-            <h3>RIBA Bronze Medal Nomination</h3>
-            <p>Research-led architectural project based on Open Government Data and QGIS analysis.</p>
-            <div class="tech-stack">QGIS · Spatial Analysis</div>
-            <a href="https://www.presidentsmedals.com/Entry-51301" class="project-link">View Publication →</a>
-        </div>
+      <!-- MOUSE -->
+      <g class="item" data-label="Dell MS700" data-sub="Travel mouse">
+        <ellipse style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:0.8" cx="530" cy="193" rx="12" ry="8" transform="rotate(-25,530,193)"/>
+        <ellipse style="fill:#d9d6ce;stroke:#1a1a1a;stroke-width:0.8" cx="532" cy="197" rx="12" ry="4" transform="rotate(-25,532,197)"/>
+        <line style="stroke:#888;stroke-width:0.7" x1="524" y1="189" x2="524" y2="196"/>
+      </g>
 
-        <div class="project-card">
-            <span class="project-tag">Computational Design</span>
-            <h3>SENSMOD: Spatial Theory</h3>
-            <p>Built a spatial architectural project using Arduino and motion sensors, published in ResearchGate.</p>
-            <div class="tech-stack">Arduino · Physical Computing</div>
-            <a href="https://www.researchgate.net/publication/343982617_SENSMOD..." class="project-link">Read Paper →</a>
-        </div>
+      <!-- LAPTOP -->
+      <g class="item" data-label="ThinkPad X1 / MacBook" data-sub="Laptop">
+        <polygon style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:1" points="540,210 610,178 618,183 548,215"/>
+        <polygon style="fill:#d9d6ce;stroke:#1a1a1a;stroke-width:1" points="540,210 548,215 548,222 540,217"/>
+        <polygon style="fill:#ece9e2;stroke:#1a1a1a;stroke-width:1" points="548,215 618,183 618,190 548,222"/>
+        <polygon style="fill:#2a2a2a;stroke:#1a1a1a;stroke-width:1" points="545,182 605,155 612,159 552,186"/>
+        <polygon style="fill:#333;stroke:#1a1a1a;stroke-width:0.8" points="546,183 604,157 610,161 552,187"/>
+        <line style="stroke:#666;stroke-width:1.5" x1="545" y1="209" x2="614" y2="177"/>
+      </g>
 
-        <div class="project-card">
-            <span class="project-tag">Data Visualization</span>
-            <h3>Interactive Covid-19 Tracker</h3>
-            <p>Real-time dashboard using scraped JHU CSSE data with animated mapping functionality.</p>
-            <div class="tech-stack">R · Shiny · Web Scraping</div>
-            <a href="https://github.com/ekuginyte/MT5763_Shiny" class="project-link">Open App →</a>
-        </div>
+      <!-- MUG -->
+      <g class="item" data-label="Morning coffee" data-sub="Always brewing ☕">
+        <ellipse style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:0.8" cx="340" cy="202" rx="14" ry="8"/>
+        <polygon style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:0.8" points="326,202 354,202 352,228 328,228"/>
+        <ellipse style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:0.8" cx="340" cy="228" rx="12" ry="6"/>
+        <path style="fill:none;stroke:#1a1a1a;stroke-width:2;stroke-linecap:round" d="M 354,209 Q 366,209 366,219 Q 366,228 354,225"/>
+        <ellipse style="fill:#8b6347;stroke:none" cx="340" cy="202" rx="12" ry="6.5"/>
+        <path style="fill:none;stroke:#ccc;stroke-width:0.8;opacity:0.5" d="M 336,196 Q 334,191 336,187"/>
+        <path style="fill:none;stroke:#ccc;stroke-width:0.8;opacity:0.5" d="M 341,194 Q 339,189 341,185"/>
+        <path style="fill:none;stroke:#ccc;stroke-width:0.8;opacity:0.5" d="M 346,196 Q 344,191 346,187"/>
+      </g>
 
-    </div>
+      <!-- CHAIR -->
+      <g class="item" data-label="HÅG Capisco" data-sub="Saddle chair">
+        <line style="stroke:#333;stroke-width:3;stroke-linecap:round" x1="118" y1="540" x2="68" y2="548"/>
+        <line style="stroke:#333;stroke-width:3;stroke-linecap:round" x1="118" y1="540" x2="86" y2="568"/>
+        <line style="stroke:#333;stroke-width:3;stroke-linecap:round" x1="118" y1="540" x2="118" y2="572"/>
+        <line style="stroke:#333;stroke-width:3;stroke-linecap:round" x1="118" y1="540" x2="150" y2="568"/>
+        <line style="stroke:#333;stroke-width:3;stroke-linecap:round" x1="118" y1="540" x2="168" y2="548"/>
+        <ellipse style="fill:#2a2a2a" cx="118" cy="540" rx="10" ry="5"/>
+        <ellipse style="fill:#2a2a2a" cx="68" cy="551" rx="5" ry="3"/>
+        <ellipse style="fill:#2a2a2a" cx="86" cy="570" rx="5" ry="3"/>
+        <ellipse style="fill:#2a2a2a" cx="118" cy="574" rx="5" ry="3"/>
+        <ellipse style="fill:#2a2a2a" cx="150" cy="570" rx="5" ry="3"/>
+        <ellipse style="fill:#2a2a2a" cx="168" cy="551" rx="5" ry="3"/>
+        <polygon style="fill:#2a2a2a;stroke:#1a1a1a;stroke-width:1" points="112,432 124,432 122,480 114,480"/>
+        <polygon style="fill:#888;stroke:#1a1a1a;stroke-width:1" points="108,472 128,472 130,488 106,488"/>
+        <ellipse style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:1" cx="118" cy="410" rx="40" ry="22"/>
+        <polygon style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:1" points="78,410 158,410 155,430 81,430"/>
+        <ellipse style="fill:#d9d6ce;stroke:#1a1a1a;stroke-width:1" cx="118" cy="430" rx="37" ry="14"/>
+        <path style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:1" d="M 88,380 Q 80,350 100,330 Q 118,318 136,330 Q 156,350 148,380 Z"/>
+        <path style="fill:none;stroke:#1a1a1a;stroke-width:0.8" d="M 95,370 Q 90,350 106,338 Q 118,330 130,338 Q 146,350 141,370"/>
+        <polygon style="fill:#888;stroke:#1a1a1a;stroke-width:1" points="110,380 126,380 124,410 112,410"/>
+      </g>
 
+      <!-- PERSON (click → cv.html) -->
+      <g id="person-group" class="item" data-label="That's me →" data-sub="Click to see my CV" data-href="cv.html">
+        <path style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:1" d="M 210,470 Q 208,490 212,510 Q 216,525 224,532 L 228,528 Q 222,520 218,506 Q 214,488 216,470 Z"/>
+        <path style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:1" d="M 220,465 Q 226,480 236,490 Q 248,500 256,502 L 258,496 Q 248,494 238,484 Q 228,474 222,460 Z"/>
+        <path style="fill:#2a2a2a;stroke:#1a1a1a;stroke-width:0.5" d="M 252,498 Q 265,498 268,504 L 262,508 Q 260,504 252,504 Z"/>
+        <rect style="fill:#2a2a2a" x="265" y="502" width="4" height="8" rx="1"/>
+        <path style="fill:#2a2a2a;stroke:#1a1a1a;stroke-width:0.5" d="M 218,526 Q 232,526 236,532 L 230,536 Q 228,532 220,532 Z"/>
+        <rect style="fill:#2a2a2a" x="232" y="530" width="4" height="8" rx="1"/>
+        <path style="fill:#d9d6ce;stroke:#1a1a1a;stroke-width:1" d="M 196,420 Q 190,440 192,460 Q 198,475 220,472 Q 238,470 244,460 Q 248,448 242,428 Z"/>
+        <path style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:1" d="M 200,380 Q 196,395 196,420 L 242,420 Q 244,395 238,380 Z"/>
+        <path style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:1" d="M 238,385 Q 258,388 268,395 Q 274,400 272,408 L 264,406 Q 266,402 260,398 Q 250,392 236,390 Z"/>
+        <path style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:1" d="M 200,385 Q 184,382 176,375 Q 170,368 173,360 L 180,363 Q 178,368 184,373 Q 192,380 202,382 Z"/>
+        <ellipse style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:0.8" cx="174" cy="358" rx="7" ry="5"/>
+        <ellipse style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:1" cx="218" cy="356" rx="18" ry="20"/>
+        <polygon style="fill:#f0eeea;stroke:#1a1a1a;stroke-width:1" points="212,372 224,372 226,385 210,385"/>
+        <path style="fill:#2a2a2a;stroke:#1a1a1a;stroke-width:0.5" d="M 205,340 Q 196,335 192,345 Q 188,360 190,380 Q 194,400 196,420 Q 190,400 188,375 Q 184,350 190,335 Q 198,320 218,320 Q 238,320 242,335 Q 246,350 242,375 Q 240,360 236,345 Q 232,333 218,332 Q 208,332 205,340 Z"/>
+        <path style="fill:#2a2a2a;stroke:none" d="M 198,355 Q 192,365 192,380 Q 196,370 200,362 Z"/>
+        <path style="fill:#2a2a2a;stroke:none" d="M 234,355 Q 240,365 240,378 Q 236,370 232,362 Z"/>
+        <ellipse style="fill:#2a2a2a" cx="212" cy="353" rx="2.5" ry="2"/>
+        <ellipse style="fill:#2a2a2a" cx="224" cy="352" rx="2.5" ry="2"/>
+        <path style="fill:none;stroke:#2a2a2a;stroke-width:1.5;stroke-linecap:round" d="M 208,348 Q 212,346 216,347"/>
+        <path style="fill:none;stroke:#2a2a2a;stroke-width:1.5;stroke-linecap:round" d="M 220,346 Q 224,344 228,345"/>
+        <path style="fill:none;stroke:#2a2a2a;stroke-width:1;stroke-linecap:round" d="M 214,362 Q 218,365 222,362"/>
+      </g>
+
+    </svg>
+    <!-- END SVG -->
+
+  </div><!-- /.scene -->
+
+  <p class="hint">hover to explore · click to navigate</p>
+</div>
+
+<script>
+  const tooltip  = document.getElementById('tooltip');
+  const ttLabel  = document.getElementById('tt-label');
+  const ttSub    = document.getElementById('tt-sub');
+  const scene    = document.getElementById('scene');
+
+  let activeItem = null;
+
+  // Position tooltip near cursor, keeping it on screen
+  function positionTooltip(e) {
+    const sceneRect = scene.getBoundingClientRect();
+    const tw = tooltip.offsetWidth;
+    const th = tooltip.offsetHeight;
+
+    // Use pageX/Y relative to the scene div
+    let x = e.clientX - sceneRect.left + 14;
+    let y = e.clientY - sceneRect.top  - th - 10;
+
+    // Keep within scene bounds
+    if (x + tw > sceneRect.width)  x = e.clientX - sceneRect.left - tw - 14;
+    if (y < 0)                      y = e.clientY - sceneRect.top  + 18;
+
+    tooltip.style.left = x + 'px';
+    tooltip.style.top  = y + 'px';
+  }
+
+  scene.addEventListener('mousemove', e => {
+    const item = e.target.closest('.item');
+    if (item && activeItem === item) {
+      positionTooltip(e);
+    }
+  });
+
+  scene.addEventListener('mouseover', e => {
+    const item = e.target.closest('.item');
+    if (!item) return;
+    activeItem = item;
+    ttLabel.textContent = item.dataset.label || '';
+    ttSub.textContent   = item.dataset.sub   || '';
+    tooltip.classList.add('visible');
+  });
+
+  scene.addEventListener('mouseout', e => {
+    const item = e.target.closest('.item');
+    if (!item) return;
+    const related = e.relatedTarget;
+    if (related && related.closest('.item') === item) return;
+    activeItem = null;
+    tooltip.classList.remove('visible');
+  });
+
+  scene.addEventListener('click', e => {
+    const item = e.target.closest('.item');
+    if (!item) return;
+    const href = item.dataset.href;
+    if (href) window.location.href = href;
+  });
+</script>
 </body>
 </html>
