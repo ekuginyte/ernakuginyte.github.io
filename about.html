@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Erna Kuginyte</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:     #e8e4dc;
+    --white:  #faf9f5;
+    --copper: #c47a3a;
+    --ink:    #2d2620;
+    --mid:    #8c7355;
+    --faint:  #c8c0b0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ink); font-family: 'Inter', sans-serif; font-weight: 300; line-height: 1.7; }
+
+  .back { position: fixed; top: 2rem; left: 2.5rem; font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--faint); text-decoration: none; z-index: 100; transition: color 0.2s; }
+  .back:hover { color: var(--copper); }
+
+  .page { max-width: 1080px; margin: 0 auto; padding: 0 3rem 6rem; }
+
+  /* hero */
+  .hero { padding: 8rem 0 5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: end; border-bottom: 0.5px solid var(--faint); }
+  .hero-name { font-family: 'Playfair Display', serif; font-size: clamp(3.2rem, 6vw, 5.5rem); font-weight: 400; line-height: 1.05; letter-spacing: -0.02em; }
+  .hero-name em { font-style: italic; color: var(--copper); }
+  .hero-summary { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1rem; color: var(--mid); line-height: 1.85; margin-bottom: 2rem; }
+  .contact-list { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; }
+  .contact-list li { font-size: 0.75rem; letter-spacing: 0.05em; color: var(--mid); }
+  .contact-label { font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--faint); display: inline-block; width: 4.5rem; }
+  .contact-list a { color: var(--mid); text-decoration: none; border-bottom: 0.5px solid transparent; transition: color 0.2s, border-color 0.2s; }
+  .contact-list a:hover { color: var(--copper); border-bottom-color: var(--copper); }
+
+  /* sections — default: label left */
+  .section { display: grid; grid-template-columns: 160px 1fr; gap: 4rem; padding: 4rem 0; border-bottom: 0.5px solid var(--faint); }
+  .section:last-child { border-bottom: none; }
+  .section-label { font-size: 0.58rem; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: var(--copper); padding-top: 0.15rem; position: sticky; top: 2rem; align-self: start; }
+
+  /* projects: label right */
+  .section--right { grid-template-columns: 1fr 160px; }
+  .section--right .section-label { text-align: right; order: 2; }
+  .section--right .projects-grid { order: 1; }
+
+  /* experience */
+  .role { margin-bottom: 3rem; opacity: 0; transform: translateY(14px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  .role.visible { opacity: 1; transform: translateY(0); }
+  .role:last-child { margin-bottom: 0; }
+  .role-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.25rem; gap: 1rem; }
+  .role-title { font-size: 0.92rem; font-weight: 500; color: var(--ink); }
+  .role-date { font-size: 0.68rem; letter-spacing: 0.1em; color: var(--faint); white-space: nowrap; flex-shrink: 0; }
+  .role-company { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper); margin-bottom: 0.8rem; }
+  .role-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+  .role-bullets li { font-size: 0.86rem; color: var(--mid); padding-left: 1.2rem; position: relative; }
+  .role-bullets li::before { content: '—'; position: absolute; left: 0; color: var(--faint); top: 0.15rem; font-size: 0.7rem; }
+
+  /* education */
+  .edu-item { margin-bottom: 2.2rem; opacity: 0; transform: translateY(14px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  .edu-item.visible { opacity: 1; transform: translateY(0); }
+  .edu-item:last-child { margin-bottom: 0; }
+  .edu-degree { font-size: 0.92rem; font-weight: 500; color: var(--ink); margin-bottom: 0.2rem; }
+  .edu-school { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--copper); margin-bottom: 0.25rem; }
+  .edu-note { font-size: 0.8rem; color: var(--mid); font-style: italic; }
+
+  /* projects */
+  .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .project-card { background: var(--white); border: 0.5px solid var(--faint); border-radius: 3px; padding: 1.5rem; opacity: 0; transform: translateY(14px); transition: opacity 0.55s ease, transform 0.55s ease, border-color 0.2s; }
+  .project-card.visible { opacity: 1; transform: translateY(0); }
+  .project-card:hover { border-color: var(--copper); }
+  .project-tag { font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--copper); margin-bottom: 0.65rem; }
+  .project-title { font-size: 0.9rem; font-weight: 500; color: var(--ink); margin-bottom: 0.45rem; line-height: 1.4; }
+  .project-desc { font-size: 0.82rem; color: var(--mid); margin-bottom: 0.9rem; line-height: 1.65; }
+  .project-stack { font-size: 0.68rem; letter-spacing: 0.05em; color: var(--faint); margin-bottom: 0.9rem; font-family: 'Courier New', monospace; }
+  .project-link { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--copper); text-decoration: none; border-bottom: 0.5px solid transparent; transition: border-color 0.2s; }
+  .project-link:hover { border-bottom-color: var(--copper); }
+
+  /* skills */
+  .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .skill-group { opacity: 0; transform: translateY(14px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  .skill-group.visible { opacity: 1; transform: translateY(0); }
+  .skill-group-label { font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); margin-bottom: 0.6rem; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .skill-tag { font-size: 0.72rem; color: var(--mid); background: var(--bg); border: 0.5px solid var(--faint); padding: 0.22rem 0.6rem; border-radius: 2px; }
+
+  /* personal */
+  .personal-row { display: flex; gap: 4rem; flex-wrap: wrap; opacity: 0; transform: translateY(14px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  .personal-row.visible { opacity: 1; transform: translateY(0); }
+  .personal-group-label { font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); margin-bottom: 0.4rem; }
+  .personal-value { font-size: 0.84rem; color: var(--mid); }
+
+  @media (max-width: 768px) {
+    .page { padding: 0 1.5rem 4rem; }
+    .hero, .section, .section--right { grid-template-columns: 1fr; gap: 1.5rem; }
+    .hero { padding: 6rem 0 3rem; }
+    .section-label, .section--right .section-label { position: static; text-align: left; order: 0; }
+    .section--right .projects-grid { order: 0; }
+    .projects-grid, .skills-grid { grid-template-columns: 1fr; }
+    .back { left: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<a class="back" href="index.html">← my desk</a>
+
+<div class="page">
+
+  <div class="hero">
+    <h1 class="hero-name">Erna<br><em>Kuginyte</em></h1>
+    <div>
+      <p class="hero-summary">Pragmatic data professional bridging analytics engineering, statistical modelling, and a background in architecture. Driven by impact, detail, and curiosity.</p>
+      <ul class="contact-list">
+        <li><span class="contact-label">Location</span>London, UK</li>
+        <li><span class="contact-label">Email</span><a href="mailto:erna.kuginyte@gmail.com">erna.kuginyte@gmail.com</a></li>
+        <li><span class="contact-label">LinkedIn</span><a href="https://linkedin.com/in/ernakuginyte" target="_blank">ernakuginyte</a></li>
+        <li><span class="contact-label">GitHub</span><a href="https://github.com/ekuginyte" target="_blank">ekuginyte</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Experience</div>
+    <div>
+      <div class="role">
+        <div class="role-header">
+          <div class="role-title">Senior Data Analyst</div>
+          <div class="role-date">May 2026 – Present</div>
+        </div>
+        <div class="role-company">7IM · London</div>
+        <ul class="role-bullets">
+          <li></li>
+        </ul>
+      </div>
+            <div class="role">
+        <div class="role-header">
+          <div class="role-title">Data Analyst</div>
+          <div class="role-date">Nov 2023 – Apr 2026</div>
+        </div>
+        <div class="role-company">Titan Wealth · London</div>
+        <ul class="role-bullets">
+          <li>Analytics engineering for group-level performance reporting, consolidating multi-source data across acquired entities using Spark within Microsoft Fabric.</li>
+          <li>Developed a liquidity risk scoring model replacing an external provider — £133,000 in annual cost savings.</li>
+          <li>Built a predictive emissions estimation model using multi-source data imputation and statistical modelling.</li>
+          <li>Streamlined fund holdings analytics by replacing Access-based processes with automated Spark pipelines.</li>
+        </ul>
+      </div>
+      <div class="role">
+        <div class="role-header">
+          <div class="role-title">Architectural Designer</div>
+          <div class="role-date">Sep 2020 – Aug 2022</div>
+        </div>
+        <div class="role-company">Populous · London</div>
+        <ul class="role-bullets">
+          <li>Spatial analysis and design thinking on large-scale commercial and speculative projects.</li>
+          <li>Collaborated with multidisciplinary teams to deliver data-informed design solutions.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Education</div>
+    <div>
+      <div class="edu-item">
+        <div class="edu-degree">MSc Applied Statistics & Data Mining</div>
+        <div class="edu-school">University of St Andrews · 2023</div>
+        <div class="edu-note">Distinction · Dean's List</div>
+      </div>
+      <div class="edu-item">
+        <div class="edu-degree">Erasmus+ Exchange — Architecture</div>
+        <div class="edu-school">Stuttgart University · 2019</div>
+      </div>
+      <div class="edu-item">
+        <div class="edu-degree">BSc Architecture</div>
+        <div class="edu-school">Welsh School of Architecture · 2020</div>
+        <div class="edu-note">First Class Honours</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section section--right">
+    <div class="projects-grid">
+      <div class="project-card">
+        <div class="project-tag">Bayesian Statistics</div>
+        <div class="project-title">High-Dimensional Variable Selection</div>
+        <div class="project-desc">MSc dissertation exploring Bayesian LASSO, Spike-and-Slab, and Horseshoe priors on complex datasets.</div>
+        <div class="project-stack">R · XGBoost · Elastic Net</div>
+        <a href="https://github.com/ekuginyte/dissertation" class="project-link" target="_blank">View research</a>
+      </div>
+      <div class="project-card">
+        <div class="project-tag">Spatial Design</div>
+        <div class="project-title">RIBA Bronze Medal Nomination</div>
+        <div class="project-desc">Research-led architectural project based on Open Government Data and QGIS spatial analysis.</div>
+        <div class="project-stack">QGIS · Spatial Analysis</div>
+        <a href="https://www.presidentsmedals.com/Entry-51301" class="project-link" target="_blank">View publication</a>
+      </div>
+      <div class="project-card">
+        <div class="project-tag">Computational Design</div>
+        <div class="project-title">SENSMOD: Spatial Theory</div>
+        <div class="project-desc">Spatial architectural project using Arduino and motion sensors, published in ResearchGate.</div>
+        <div class="project-stack">Arduino · Physical Computing</div>
+        <a href="https://www.researchgate.net/publication/343982617" class="project-link" target="_blank">Read paper</a>
+      </div>
+      <div class="project-card">
+        <div class="project-tag">Data Visualisation</div>
+        <div class="project-title">Interactive Covid-19 Tracker</div>
+        <div class="project-desc">Real-time dashboard using scraped JHU CSSE data with animated mapping and download functionality.</div>
+        <div class="project-stack">R · Shiny · Web Scraping</div>
+        <a href="https://github.com/ekuginyte/MT5763_Shiny" class="project-link" target="_blank">Open app</a>
+      </div>
+    </div>
+    <div class="section-label">Projects</div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Skills</div>
+    <div class="skills-grid">
+      <div class="skill-group">
+        <div class="skill-group-label">Languages</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">PySpark</span>
+          <span class="skill-tag">SQL</span>
+          <span class="skill-tag">R</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Tools</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Microsoft Fabric</span>
+          <span class="skill-tag">Azure</span>
+          <span class="skill-tag">Power BI</span>
+          <span class="skill-tag">Git</span>
+          <span class="skill-tag">VS Code</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Data Engineering</div>
+        <div class="skill-tags">
+          <span class="skill-tag">ETL Pipelines</span>
+          <span class="skill-tag">Lakehouse</span>
+          <span class="skill-tag">Data Orchestration</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Statistics & ML</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Bayesian Inference</span>
+          <span class="skill-tag">GLMs</span>
+          <span class="skill-tag">PCA</span>
+          <span class="skill-tag">Classification</span>
+          <span class="skill-tag">Clustering</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Personal</div>
+    <div class="personal-row">
+      <div>
+        <div class="personal-group-label">Languages</div>
+        <div class="personal-value">Lithuanian · English · Russian (beginner)</div>
+      </div>
+      <div>
+        <div class="personal-group-label">Certifications</div>
+        <div class="personal-value">IMC Level 1 · Data Engineering on Microsoft Fabric · Python for Data Science</div>
+      </div>
+      <div>
+        <div class="personal-group-label">Outside work</div>
+        <div class="personal-value">Swimming · Cycling · Running · Lino Printing</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 70);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.role, .edu-item, .project-card, .skill-group, .personal-row')
+    .forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

@@ -30,24 +30,24 @@ TRANSFORMS = {
 # anchor: "start" (text goes right) or "end" (text goes left)
 # kind: "product" (copies name on click) or "about" (links to about.html)
 LABELS = {
-    "screen":   dict(name="LG 40WP95C-W",        sub=None,             x1=660, y1=220, x2=730, y2=195, tx=735, ty=199, anchor="start", kind="product"),
-    "laptop":   dict(name="ThinkPad X1 Carbon",   sub='14"',            x1=690, y1=450, x2=760, y2=470, tx=765, ty=474, anchor="start", kind="product"),
-    "keyboard": dict(name="Logitech K950 Slim",   sub=None,             x1=310, y1=315, x2=230, y2=295, tx=225, ty=299, anchor="end",   kind="product"),
-    "mouse":    dict(name="Logitech Lift",         sub="Vertical Mouse", x1=530, y1=400, x2=610, y2=375, tx=615, ty=379, anchor="start", kind="product"),
-    "mug":      dict(name="Coffee",               sub=None,             x1=310, y1=230, x2=225, y2=205, tx=220, ty=209, anchor="end",   kind="product"),
-    "chair":    dict(name="HÅG Capisco",          sub=None,             x1=155, y1=640, x2=80,  y2=610, tx=75,  ty=614, anchor="end",   kind="product"),
-    "me":       dict(name="ABOUT ME",             sub=None,             x1=None,y1=None,x2=None,y2=None,tx=175, ty=510, anchor="end",   kind="about"),
+    "screen":   dict(name="LG 40WP95C-W",          sub=None,              x1=660, y1=220, x2=730, y2=195, tx=735, ty=199, anchor="start", kind="product"),
+    "laptop":   dict(name="ThinkPad X1 Carbon",     sub='14"',             x1=690, y1=450, x2=760, y2=470, tx=765, ty=474, anchor="start", kind="product"),
+    "keyboard": dict(name="Logitech K950 Slim",     sub=None,              x1=310, y1=315, x2=230, y2=295, tx=225, ty=299, anchor="end",   kind="product"),
+    "mouse":    dict(name="Logitech Lift",           sub="Vertical Mouse",  x1=530, y1=400, x2=610, y2=375, tx=615, ty=379, anchor="start", kind="product"),
+    "mug":      dict(name="Coffee",                 sub=None,              x1=310, y1=230, x2=225, y2=205, tx=220, ty=209, anchor="end",   kind="product"),
+    "chair":    dict(name="HÅG Capisco",            sub=None,              x1=155, y1=640, x2=80,  y2=610, tx=75,  ty=614, anchor="end",   kind="product"),
+    "me":       dict(name="ABOUT ME",               sub=None,              x1=None,y1=None,x2=None,y2=None,tx=175, ty=510, anchor="end",   kind="about"),
 }
- 
-# Invisible hover areas
+
+# Invisible hover hit-areas (x, y, width, height) in SVG units
 HIT_AREAS = {
-    "screen":   (294, -5,  432, 412),
-    "laptop":   (492, 303, 232, 210),
-    "keyboard": (248, 276, 220, 145),
-    "mouse":    (434, 381,  75,  56),
-    "mug":      (307, 209,  77,  77),
-    "chair":    (33,  386, 372, 462),
-    "me":       (117, 253, 328, 439),
+    "screen":   (460, 80,  310, 320),
+    "laptop":   (530, 360, 220, 160),
+    "keyboard": (155, 240, 240, 130),
+    "mouse":    (440, 360, 120, 100),
+    "mug":      (255, 130, 110, 120),
+    "chair":    (80,  580, 280, 260),
+    "me":       (195, 490, 180, 140),
 }
 
 LAYER_ORDER = ["desk", "screen", "mat", "laptop", "keyboard",
