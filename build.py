@@ -1,17 +1,15 @@
-import re, math, sys, os
+import re, sys, os
 
 # ── config ────────────────────────────────────────────────────────────────────
 
-SVG_FILE   = "image.svg"          # your drawing — update whenever you export
-OUT_FILE   = "index.html"         # output page
-BG_COLOR   = "#e8e4dc"
-COPPER     = "#c47a3a"
+SVG_FILE  = "image.svg"
+OUT_FILE  = "index.html"
+BG        = "#e8e4dc"
+COPPER    = "#c47a3a"
 
-# Which layers exist in your SVG (update if you rename/add layers in Illustrator)
 SVG_LAYERS = ["screen", "laptop", "keyboard", "me",
               "desk", "mat", "mouse", "mug", "chair", "chair2"]
 
-# Explosion transforms (tx, ty) in SVG units — tweak freely
 TRANSFORMS = {
     "desk":     (0,       0),
     "screen":   (53.67,  -26.83),
@@ -25,21 +23,16 @@ TRANSFORMS = {
     "chair2":   (-35.78,  17.89),
 }
 
-# Labels — edit name/sub/positions here
-# x1,y1 = dot on the piece   x2,y2 = arrowhead end   tx,ty = text position
-# anchor: "start" (text goes right) or "end" (text goes left)
-# kind: "product" (copies name on click) or "about" (links to about.html)
 LABELS = {
-    "screen":   dict(name="LG 40WP95C-W",          sub=None,              x1=660, y1=220, x2=730, y2=195, tx=735, ty=199, anchor="start", kind="product"),
-    "laptop":   dict(name="ThinkPad X1 Carbon",     sub='14"',             x1=690, y1=450, x2=760, y2=470, tx=765, ty=474, anchor="start", kind="product"),
-    "keyboard": dict(name="Logitech K950 Slim",     sub=None,              x1=310, y1=315, x2=230, y2=295, tx=225, ty=299, anchor="end",   kind="product"),
-    "mouse":    dict(name="Logitech Lift",           sub="Vertical Mouse",  x1=530, y1=400, x2=610, y2=375, tx=615, ty=379, anchor="start", kind="product"),
-    "mug":      dict(name="Coffee",                 sub=None,              x1=310, y1=230, x2=225, y2=205, tx=220, ty=209, anchor="end",   kind="product"),
-    "chair":    dict(name="HÅG Capisco",            sub=None,              x1=155, y1=640, x2=80,  y2=610, tx=75,  ty=614, anchor="end",   kind="product"),
-    "me":       dict(name="ABOUT ME",               sub=None,              x1=None,y1=None,x2=None,y2=None,tx=175, ty=510, anchor="end",   kind="about"),
+    "screen":   dict(name="LG 40WP95C-W",        sub=None,             x1=660, y1=220, x2=730, y2=195, tx=735, ty=199, anchor="start", kind="product"),
+    "laptop":   dict(name="ThinkPad X1 Carbon",   sub='14"',            x1=690, y1=450, x2=760, y2=470, tx=765, ty=474, anchor="start", kind="product"),
+    "keyboard": dict(name="Logitech K950 Slim",   sub=None,             x1=310, y1=315, x2=230, y2=295, tx=225, ty=299, anchor="end",   kind="product"),
+    "mouse":    dict(name="Logitech Lift",         sub="Vertical Mouse", x1=530, y1=400, x2=610, y2=375, tx=615, ty=379, anchor="start", kind="product"),
+    "mug":      dict(name="Coffee",               sub=None,             x1=310, y1=230, x2=225, y2=205, tx=220, ty=209, anchor="end",   kind="product"),
+    "chair":    dict(name="HÅG Capisco",          sub=None,             x1=155, y1=640, x2=80,  y2=610, tx=75,  ty=614, anchor="end",   kind="product"),
+    "me":       dict(name="ABOUT ME",             sub=None,             x1=None,y1=None,x2=None,y2=None,tx=175, ty=510, anchor="end",   kind="about"),
 }
 
-# Invisible hover hit-areas (x, y, width, height) in SVG units
 HIT_AREAS = {
     "screen":   (460, 80,  310, 320),
     "laptop":   (530, 360, 220, 160),
@@ -58,13 +51,11 @@ LAYER_ORDER = ["desk", "screen", "mat", "laptop", "keyboard",
 def extract_layer(source, layer_id):
     start_tag = f'<g id="{layer_id}"'
     start_idx = source.find(start_tag)
-    if start_idx == -1:
-        return None
+    if start_idx == -1: return None
     pos = source.find('>', start_idx) + 1
     depth = 1; end_idx = pos
     while depth > 0 and pos < len(source):
-        no = source.find('<g', pos)
-        nc = source.find('</g>', pos)
+        no = source.find('<g', pos); nc = source.find('</g>', pos)
         if nc == -1: break
         if no != -1 and no < nc: depth += 1; pos = no + 2
         else:
@@ -77,7 +68,7 @@ def extract_layer(source, layer_id):
 # ── read SVG ──────────────────────────────────────────────────────────────────
 
 if not os.path.exists(SVG_FILE):
-    print(f"ERROR: {SVG_FILE} not found. Make sure it's in the same folder as build.py")
+    print(f"ERROR: {SVG_FILE} not found.")
     sys.exit(1)
 
 with open(SVG_FILE) as f:
@@ -87,68 +78,54 @@ defs_match = re.search(r'<defs>(.*?)</defs>', svg, re.DOTALL)
 svg_defs = defs_match.group(1) if defs_match else ''
 
 layers = {}
-for layer_id in SVG_LAYERS:
-    result = extract_layer(svg, layer_id)
-    if result:
-        layers[layer_id] = result
-        print(f"  ✓ {layer_id}")
-    else:
-        print(f"  ✗ {layer_id} — not found in SVG (skipping)")
+for lid in SVG_LAYERS:
+    r = extract_layer(svg, lid)
+    if r: layers[lid] = r; print(f"  ✓ {lid}")
+    else: print(f"  ✗ {lid} — not found (skipping)")
 
-# ── build HTML ────────────────────────────────────────────────────────────────
+# ── assemble pieces ───────────────────────────────────────────────────────────
 
-def css_transforms():
-    lines = []
-    for layer, (tx, ty) in TRANSFORMS.items():
-        lines.append(f"  .svg-wrapper:hover .layer-{layer} {{ transform: translate({tx}px, {ty}px); }}")
-    return "\n".join(lines)
-
-def label_js_transforms():
-    relevant = {k: v for k, v in TRANSFORMS.items() if k in LABELS}
-    lines = []
-    for layer, (tx, ty) in relevant.items():
-        lines.append(f'  {layer}: [{tx}, {ty}],')
-    return "\n".join(lines)
+css_transforms = "\n".join(
+    f"  .svg-wrapper:hover .layer-{l} {{ transform: translate({tx}px, {ty}px); }}"
+    for l, (tx, ty) in TRANSFORMS.items()
+)
 
 html_layers = ""
-for layer in LAYER_ORDER:
-    if layer not in layers:
-        continue
-    inner = layers[layer]
-    inner = re.sub(f'<g id="{layer}"[^>]*>', f'<g id="{layer}" class="layer-group layer-{layer}">', inner, count=1)
+for l in LAYER_ORDER:
+    if l not in layers: continue
+    inner = layers[l]
+    inner = re.sub(f'<g id="{l}"[^>]*>', f'<g id="{l}" class="layer-group layer-{l}">', inner, count=1)
     html_layers += "      " + inner + "\n"
 
-html_hits = ""
-for layer, (x, y, w, h) in HIT_AREAS.items():
-    html_hits += f'      <rect class="hit-area" data-layer="{layer}" x="{x}" y="{y}" width="{w}" height="{h}"/>\n'
+html_hits = "".join(
+    f'      <rect class="hit-area" data-layer="{l}" x="{x}" y="{y}" width="{w}" height="{h}"/>\n'
+    for l, (x, y, w, h) in HIT_AREAS.items()
+)
 
 html_labels = ""
-for layer, cfg in LABELS.items():
-    kind   = cfg["kind"]
-    name   = cfg["name"]
-    sub    = cfg.get("sub")
-    x1, y1 = cfg["x1"], cfg["y1"]
-    x2, y2 = cfg["x2"], cfg["y2"]
-    tx, ty  = cfg["tx"], cfg["ty"]
-    anchor  = cfg["anchor"]
-    sub_dy  = ty + 14
+for l, cfg in LABELS.items():
+    kind, name, sub = cfg["kind"], cfg["name"], cfg.get("sub")
+    x1, y1, x2, y2 = cfg["x1"], cfg["y1"], cfg["x2"], cfg["y2"]
+    tx, ty, anchor = cfg["tx"], cfg["ty"], cfg["anchor"]
+    sub_dy = ty + 14
     copied_y = sub_dy + 13 if sub else ty + 13
-
-    dot_html = line_html = ""
-    if kind == "product" and x1 is not None:
-        dot_html  = f'<circle class="label-dot" cx="{x1}" cy="{y1}" r="2.5"/>'
-        line_html = f'<line class="label-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}"/>'
-
-    sub_html = f'<text class="label-sub" x="{tx}" y="{sub_dy}" text-anchor="{anchor}">{sub}</text>' if sub else ""
-
+    dot = f'<circle class="label-dot" cx="{x1}" cy="{y1}" r="2.5"/>' if kind=="product" and x1 else ""
+    line = f'<line class="label-line" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}"/>' if kind=="product" and x1 else ""
+    subtext = f'<text class="label-sub" x="{tx}" y="{sub_dy}" text-anchor="{anchor}">{sub}</text>' if sub else ""
     html_labels += f"""
-        <g class="label-group" id="label-{layer}" data-layer="{layer}" data-kind="{kind}" data-name="{name}">
-          {dot_html}
-          {line_html}
+        <g class="label-group" id="label-{l}" data-layer="{l}" data-kind="{kind}" data-name="{name}">
+          {dot}{line}
           <text class="label-name is-{kind}" x="{tx}" y="{ty}" text-anchor="{anchor}">{name}</text>
-          {sub_html}
-          <text class="copied-text" x="{tx}" y="{copied_y}" text-anchor="{anchor}" id="copied-{layer}">copied</text>
+          {subtext}
+          <text class="copied-text" x="{tx}" y="{copied_y}" text-anchor="{anchor}" id="copied-{l}">copied</text>
         </g>"""
+
+js_transforms = "\n".join(
+    f'  {l}: [{tx}, {ty}],'
+    for l, (tx, ty) in TRANSFORMS.items() if l in LABELS
+)
+
+# ── write HTML ────────────────────────────────────────────────────────────────
 
 html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -160,12 +137,13 @@ html = f"""<!DOCTYPE html>
 <style>
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
   body {{
-    background: {BG_COLOR};
+    background: {BG};
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     font-family: 'Inter', sans-serif;
+    overflow: hidden;
   }}
   .container {{
     display: flex;
@@ -180,6 +158,8 @@ html = f"""<!DOCTYPE html>
     color: #aaa;
     letter-spacing: 0.25em;
     text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s forwards;
   }}
   .hint {{
     font-size: 0.6rem;
@@ -188,14 +168,29 @@ html = f"""<!DOCTYPE html>
     letter-spacing: 0.18em;
     text-transform: uppercase;
     transition: opacity 0.6s;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.6s forwards;
   }}
-  .svg-wrapper:hover ~ .hint {{ opacity: 0; }}
+  .svg-wrapper:hover ~ .hint {{ opacity: 0 !important; animation: none; }}
+  @keyframes fadeUp {{
+    from {{ opacity: 0; transform: translateY(6px); }}
+    to   {{ opacity: 1; transform: translateY(0); }}
+  }}
+
+  /* page enter — zoom out from inside the screen */
   .svg-wrapper {{
     position: relative;
     width: min(90vw, 680px);
     height: min(90vw, 680px);
     cursor: crosshair;
+    transform-origin: 62% 30%;
+    animation: zoomOut 0.75s cubic-bezier(0.2, 0, 0.3, 1) forwards;
   }}
+  @keyframes zoomOut {{
+    from {{ transform: scale(10); opacity: 0; }}
+    to   {{ transform: scale(1);  opacity: 1; }}
+  }}
+
   .svg-wrapper svg {{
     width: 100%;
     height: 100%;
@@ -204,8 +199,11 @@ html = f"""<!DOCTYPE html>
   .layer-group {{
     transition: transform 0.7s cubic-bezier(0.34, 1.4, 0.64, 1);
   }}
-{css_transforms()}
+{css_transforms}
+
   .hit-area {{ fill: transparent; stroke: none; cursor: pointer; }}
+  .hit-area[data-layer="screen"] {{ cursor: zoom-in; }}
+
   .label-group {{
     opacity: 0;
     pointer-events: none;
@@ -258,9 +256,22 @@ html = f"""<!DOCTYPE html>
     transition: opacity 0.2s;
   }}
   .copied-text.show {{ opacity: 1; }}
+
+  /* inception flash overlay */
+  #flash {{
+    position: fixed;
+    inset: 0;
+    background: {BG};
+    opacity: 0;
+    pointer-events: none;
+    z-index: 999;
+    transition: opacity 0.35s ease;
+  }}
+  #flash.show {{ opacity: 1; }}
 </style>
 </head>
 <body>
+<div id="flash"></div>
 <div class="container">
   <span class="title">my desk</span>
   <div class="svg-wrapper" id="wrapper">
@@ -278,15 +289,19 @@ html = f"""<!DOCTYPE html>
       </g>
     </svg>
   </div>
-  <span class="hint">hover to explore</span>
+  <span class="hint">hover to explore · click the screen</span>
 </div>
+
 <script>
-const wrapper = document.getElementById('wrapper');
+const wrapper  = document.getElementById('wrapper');
+const flash    = document.getElementById('flash');
 let wrapperHovered = false;
-let activeLayer = null;
+let activeLayer    = null;
+
 const layerTransforms = {{
-{label_js_transforms()}
+{js_transforms}
 }};
+
 function positionLabels(hovered) {{
   document.querySelectorAll('.label-group').forEach(el => {{
     const t = layerTransforms[el.dataset.layer] || [0, 0];
@@ -296,8 +311,7 @@ function positionLabels(hovered) {{
 }}
 function showLabel(id) {{
   if (activeLayer === id) return;
-  hideAllLabels();
-  activeLayer = id;
+  hideAllLabels(); activeLayer = id;
   const el = document.getElementById('label-' + id);
   if (el) el.classList.add('visible');
 }}
@@ -305,25 +319,43 @@ function hideAllLabels() {{
   document.querySelectorAll('.label-group').forEach(el => el.classList.remove('visible'));
   activeLayer = null;
 }}
+
 wrapper.addEventListener('mouseenter', () => {{ wrapperHovered = true;  positionLabels(true);  }});
 wrapper.addEventListener('mouseleave', () => {{ wrapperHovered = false; positionLabels(false); hideAllLabels(); }});
+
 document.querySelectorAll('.hit-area').forEach(el => {{
   el.addEventListener('mouseenter', () => {{ if (wrapperHovered) showLabel(el.dataset.layer); }});
   el.addEventListener('mouseleave', () => hideAllLabels());
 }});
+
+// ── inception: click screen ───────────────────────────────────────────────────
+document.querySelector('.hit-area[data-layer="screen"]').addEventListener('click', () => {{
+  // freeze hover state, stop animations
+  wrapper.style.animation = 'none';
+  wrapper.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 1, 1), opacity 0.45s ease 0.2s';
+  wrapper.style.transformOrigin = '62% 30%'; // toward screen center
+  wrapper.style.transform = 'scale(10)';
+  wrapper.style.opacity   = '0';
+
+  // flash to bg color then reload
+  setTimeout(() => flash.classList.add('show'), 380);
+  setTimeout(() => window.location.reload(), 700);
+}});
+
+// ── label click handlers ──────────────────────────────────────────────────────
 document.querySelectorAll('.label-group').forEach(label => {{
-  const {{ kind, name, layer: layerId }} = label.dataset;
+  const {{ kind, name, layer: lid }} = label.dataset;
   if (kind === 'product') {{
     label.style.cursor = 'pointer';
     label.addEventListener('click', () => {{
       navigator.clipboard.writeText(name).then(() => {{
-        const flash = document.getElementById('copied-' + layerId);
-        if (flash) {{ flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 1400); }}
+        const f = document.getElementById('copied-' + lid);
+        if (f) {{ f.classList.add('show'); setTimeout(() => f.classList.remove('show'), 1400); }}
       }});
     }});
   }} else if (kind === 'about') {{
     label.style.cursor = 'pointer';
-    label.addEventListener('click', () => {{ window.location.href = 'about.html'; }});
+    label.addEventListener('click', () => window.location.href = 'about.html');
   }}
 }});
 </script>

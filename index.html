@@ -14,6 +14,7 @@
     justify-content: center;
     min-height: 100vh;
     font-family: 'Inter', sans-serif;
+    overflow: hidden;
   }
   .container {
     display: flex;
@@ -28,6 +29,8 @@
     color: #aaa;
     letter-spacing: 0.25em;
     text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s forwards;
   }
   .hint {
     font-size: 0.6rem;
@@ -36,14 +39,29 @@
     letter-spacing: 0.18em;
     text-transform: uppercase;
     transition: opacity 0.6s;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.6s forwards;
   }
-  .svg-wrapper:hover ~ .hint { opacity: 0; }
+  .svg-wrapper:hover ~ .hint { opacity: 0 !important; animation: none; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* page enter — zoom out from inside the screen */
   .svg-wrapper {
     position: relative;
     width: min(90vw, 680px);
     height: min(90vw, 680px);
     cursor: crosshair;
+    transform-origin: 62% 30%;
+    animation: zoomOut 0.75s cubic-bezier(0.2, 0, 0.3, 1) forwards;
   }
+  @keyframes zoomOut {
+    from { transform: scale(10); opacity: 0; }
+    to   { transform: scale(1);  opacity: 1; }
+  }
+
   .svg-wrapper svg {
     width: 100%;
     height: 100%;
@@ -62,7 +80,10 @@
   .svg-wrapper:hover .layer-chair { transform: translate(-35.78px, 17.89px); }
   .svg-wrapper:hover .layer-me { transform: translate(-35.78px, 17.89px); }
   .svg-wrapper:hover .layer-chair2 { transform: translate(-35.78px, 17.89px); }
+
   .hit-area { fill: transparent; stroke: none; cursor: pointer; }
+  .hit-area[data-layer="screen"] { cursor: zoom-in; }
+
   .label-group {
     opacity: 0;
     pointer-events: none;
@@ -115,9 +136,22 @@
     transition: opacity 0.2s;
   }
   .copied-text.show { opacity: 1; }
+
+  /* inception flash overlay */
+  #flash {
+    position: fixed;
+    inset: 0;
+    background: #e8e4dc;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 999;
+    transition: opacity 0.35s ease;
+  }
+  #flash.show { opacity: 1; }
 </style>
 </head>
 <body>
+<div id="flash"></div>
 <div class="container">
   <span class="title">my desk</span>
   <div class="svg-wrapper" id="wrapper">
@@ -3400,49 +3434,42 @@
       <g id="labels-root">
 
         <g class="label-group" id="label-screen" data-layer="screen" data-kind="product" data-name="LG 40WP95C-W">
-          <circle class="label-dot" cx="660" cy="220" r="2.5"/>
-          <line class="label-line" x1="660" y1="220" x2="730" y2="195"/>
+          <circle class="label-dot" cx="660" cy="220" r="2.5"/><line class="label-line" x1="660" y1="220" x2="730" y2="195"/>
           <text class="label-name is-product" x="735" y="199" text-anchor="start">LG 40WP95C-W</text>
           
           <text class="copied-text" x="735" y="212" text-anchor="start" id="copied-screen">copied</text>
         </g>
         <g class="label-group" id="label-laptop" data-layer="laptop" data-kind="product" data-name="ThinkPad X1 Carbon">
-          <circle class="label-dot" cx="690" cy="450" r="2.5"/>
-          <line class="label-line" x1="690" y1="450" x2="760" y2="470"/>
+          <circle class="label-dot" cx="690" cy="450" r="2.5"/><line class="label-line" x1="690" y1="450" x2="760" y2="470"/>
           <text class="label-name is-product" x="765" y="474" text-anchor="start">ThinkPad X1 Carbon</text>
           <text class="label-sub" x="765" y="488" text-anchor="start">14"</text>
           <text class="copied-text" x="765" y="501" text-anchor="start" id="copied-laptop">copied</text>
         </g>
         <g class="label-group" id="label-keyboard" data-layer="keyboard" data-kind="product" data-name="Logitech K950 Slim">
-          <circle class="label-dot" cx="310" cy="315" r="2.5"/>
-          <line class="label-line" x1="310" y1="315" x2="230" y2="295"/>
+          <circle class="label-dot" cx="310" cy="315" r="2.5"/><line class="label-line" x1="310" y1="315" x2="230" y2="295"/>
           <text class="label-name is-product" x="225" y="299" text-anchor="end">Logitech K950 Slim</text>
           
           <text class="copied-text" x="225" y="312" text-anchor="end" id="copied-keyboard">copied</text>
         </g>
         <g class="label-group" id="label-mouse" data-layer="mouse" data-kind="product" data-name="Logitech Lift">
-          <circle class="label-dot" cx="530" cy="400" r="2.5"/>
-          <line class="label-line" x1="530" y1="400" x2="610" y2="375"/>
+          <circle class="label-dot" cx="530" cy="400" r="2.5"/><line class="label-line" x1="530" y1="400" x2="610" y2="375"/>
           <text class="label-name is-product" x="615" y="379" text-anchor="start">Logitech Lift</text>
           <text class="label-sub" x="615" y="393" text-anchor="start">Vertical Mouse</text>
           <text class="copied-text" x="615" y="406" text-anchor="start" id="copied-mouse">copied</text>
         </g>
         <g class="label-group" id="label-mug" data-layer="mug" data-kind="product" data-name="Coffee">
-          <circle class="label-dot" cx="310" cy="230" r="2.5"/>
-          <line class="label-line" x1="310" y1="230" x2="225" y2="205"/>
+          <circle class="label-dot" cx="310" cy="230" r="2.5"/><line class="label-line" x1="310" y1="230" x2="225" y2="205"/>
           <text class="label-name is-product" x="220" y="209" text-anchor="end">Coffee</text>
           
           <text class="copied-text" x="220" y="222" text-anchor="end" id="copied-mug">copied</text>
         </g>
         <g class="label-group" id="label-chair" data-layer="chair" data-kind="product" data-name="HÅG Capisco">
-          <circle class="label-dot" cx="155" cy="640" r="2.5"/>
-          <line class="label-line" x1="155" y1="640" x2="80" y2="610"/>
+          <circle class="label-dot" cx="155" cy="640" r="2.5"/><line class="label-line" x1="155" y1="640" x2="80" y2="610"/>
           <text class="label-name is-product" x="75" y="614" text-anchor="end">HÅG Capisco</text>
           
           <text class="copied-text" x="75" y="627" text-anchor="end" id="copied-chair">copied</text>
         </g>
         <g class="label-group" id="label-me" data-layer="me" data-kind="about" data-name="ABOUT ME">
-          
           
           <text class="label-name is-about" x="175" y="510" text-anchor="end">ABOUT ME</text>
           
@@ -3451,12 +3478,15 @@
       </g>
     </svg>
   </div>
-  <span class="hint">hover to explore</span>
+  <span class="hint">hover to explore · click the screen</span>
 </div>
+
 <script>
-const wrapper = document.getElementById('wrapper');
+const wrapper  = document.getElementById('wrapper');
+const flash    = document.getElementById('flash');
 let wrapperHovered = false;
-let activeLayer = null;
+let activeLayer    = null;
+
 const layerTransforms = {
   screen: [53.67, -26.83],
   laptop: [84.97, 42.49],
@@ -3466,6 +3496,7 @@ const layerTransforms = {
   chair: [-35.78, 17.89],
   me: [-35.78, 17.89],
 };
+
 function positionLabels(hovered) {
   document.querySelectorAll('.label-group').forEach(el => {
     const t = layerTransforms[el.dataset.layer] || [0, 0];
@@ -3475,8 +3506,7 @@ function positionLabels(hovered) {
 }
 function showLabel(id) {
   if (activeLayer === id) return;
-  hideAllLabels();
-  activeLayer = id;
+  hideAllLabels(); activeLayer = id;
   const el = document.getElementById('label-' + id);
   if (el) el.classList.add('visible');
 }
@@ -3484,25 +3514,43 @@ function hideAllLabels() {
   document.querySelectorAll('.label-group').forEach(el => el.classList.remove('visible'));
   activeLayer = null;
 }
+
 wrapper.addEventListener('mouseenter', () => { wrapperHovered = true;  positionLabels(true);  });
 wrapper.addEventListener('mouseleave', () => { wrapperHovered = false; positionLabels(false); hideAllLabels(); });
+
 document.querySelectorAll('.hit-area').forEach(el => {
   el.addEventListener('mouseenter', () => { if (wrapperHovered) showLabel(el.dataset.layer); });
   el.addEventListener('mouseleave', () => hideAllLabels());
 });
+
+// ── inception: click screen ───────────────────────────────────────────────────
+document.querySelector('.hit-area[data-layer="screen"]').addEventListener('click', () => {
+  // freeze hover state, stop animations
+  wrapper.style.animation = 'none';
+  wrapper.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 1, 1), opacity 0.45s ease 0.2s';
+  wrapper.style.transformOrigin = '62% 30%'; // toward screen center
+  wrapper.style.transform = 'scale(10)';
+  wrapper.style.opacity   = '0';
+
+  // flash to bg color then reload
+  setTimeout(() => flash.classList.add('show'), 380);
+  setTimeout(() => window.location.reload(), 700);
+});
+
+// ── label click handlers ──────────────────────────────────────────────────────
 document.querySelectorAll('.label-group').forEach(label => {
-  const { kind, name, layer: layerId } = label.dataset;
+  const { kind, name, layer: lid } = label.dataset;
   if (kind === 'product') {
     label.style.cursor = 'pointer';
     label.addEventListener('click', () => {
       navigator.clipboard.writeText(name).then(() => {
-        const flash = document.getElementById('copied-' + layerId);
-        if (flash) { flash.classList.add('show'); setTimeout(() => flash.classList.remove('show'), 1400); }
+        const f = document.getElementById('copied-' + lid);
+        if (f) { f.classList.add('show'); setTimeout(() => f.classList.remove('show'), 1400); }
       });
     });
   } else if (kind === 'about') {
     label.style.cursor = 'pointer';
-    label.addEventListener('click', () => { window.location.href = 'about.html'; });
+    label.addEventListener('click', () => window.location.href = 'about.html');
   }
 });
 </script>
